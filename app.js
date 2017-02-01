@@ -8,7 +8,7 @@ var bodyParser = require('body-parser');
 var firebaseModule = require('./firebase-module');
 
 var routes = require('./routes/index');
-var users = require('./routes/users');
+var ubcScraper = require('./routes/ubc');
 
 var app = express();
 
@@ -27,7 +27,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
-app.use('/users', users);
+app.use('/ubc', ubcScraper);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
