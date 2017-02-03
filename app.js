@@ -9,7 +9,7 @@ var firebaseModule = require('./firebase-module');
 
 var routes = require('./routes/index');
 var ubcScraper = require('./routes/ubc');
-
+var sfuScraper = require('./routes/sfu');
 var app = express();
 
 // view engine setup
@@ -28,6 +28,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/ubc', ubcScraper);
+app.use('/sfu', sfuScraper);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
