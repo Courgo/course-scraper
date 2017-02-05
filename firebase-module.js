@@ -50,3 +50,24 @@ function saveCourses(universityVal, courses, res) {
         });
 }
 module.exports.saveCourses = saveCourses;
+
+function getStatistics() {
+    var universityCounts = new Map();
+    firebaseApp.database().ref('courses')
+        .once('value')
+        .then(function(snapshot) {
+            snapshot.forEach(function(childSnapshot) {
+                var university = childSnapshot.val().university;
+                if (universityCounts.has(university)) {
+                    var count = universityCounts.get(university);
+                    universityCounts.set(university, count + 1);
+                } else {
+                    universityCounts.set(university, 1);
+                }
+            });
+            universityCounts.forEach(function(value, key, map) {
+                console.log(key + ": " + value + " courses");
+            });
+        });
+}
+module.exports.getStatistics = getStatistics;

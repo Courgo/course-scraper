@@ -44,6 +44,7 @@ app.use(function(req, res, next) {
 if (app.get('env') === 'development') {
     console.log('Starting in development environment.');
     firebaseModule.initialize("./credential-dev.json", "https://courgo-dev.firebaseio.com/");
+    firebaseModule.getStatistics();
     app.use(function(err, req, res, next) {
         res.status(err.status || 500);
         res.render('error', {
