@@ -4,13 +4,9 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-
 var firebaseModule = require('./firebase-module');
 
 var routes = require('./routes/index');
-var ubcScraper = require('./routes/ubc');
-var sfuScraper = require('./routes/sfu');
-var uvicScraper = require('./routes/uvic');
 var app = express();
 
 // view engine setup
@@ -28,9 +24,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
-app.use('/ubc', ubcScraper);
-app.use('/sfu', sfuScraper);
-app.use('/uvic', uvicScraper);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -69,5 +62,29 @@ app.use(function(err, req, res, next) {
     });
 });
 
+var args = process.argv;
+if (args.length <= 2) {
+    console.log("No arguments provided in the form: 'scrape' [university]");
+    process.exit(0);
+} else {
+    if (args[2] === 'scrape') {
+        if (args.length > 3) {
+            var university = args[3];
+            try {
+                var universityScraper = require('./routes/' + university);
+                universityScraper.start();
+            } catch (err) {
+                console.log("University key: "+ university + " is not recognized.");
+                process.exit(0);
+            }
+        } else {
+            console.log("Need additional argument: 'university'.");
+            process.exit(0);
+        }
+    } else {
+        console.log("Invalid action.");
+        process.exit(0);
+    }
+}
 
 module.exports = app;

@@ -13,7 +13,7 @@ function initialize(pathToCredentials, dbUrl) {
 }
 module.exports.initialize = initialize;
 
-function saveCourses(universityVal, courses, res) {
+function saveCourses(universityVal, courses) {
     if (!firebaseApp) {
         console.log('Firebase app has not been initialized yet.');
         return;
@@ -44,9 +44,7 @@ function saveCourses(universityVal, courses, res) {
                     university: universityVal
                 });
             }
-            res.json({
-                "success": true
-            });
+            console.log('Saved ' + courses.length + ' new courses for: ' + universityVal);
         });
 }
 module.exports.saveCourses = saveCourses;

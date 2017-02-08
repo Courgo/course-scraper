@@ -1,12 +1,11 @@
-var express = require('express');
-var router = express.Router();
 var request = require('request-promise');
 var cheerio = require('cheerio');
 var q = require('bluebird');
 var firebase = require('../firebase-module');
 
 /* Custom scraping logic for UBC's course directory. */
-router.get('/', function(req, res, next) {
+function start() {
+    console.log('Scraping...');
     request('https://courses.students.ubc.ca/cs/main?pname=subjarea', function(error, response, html) {
         if (!error && response.statusCode == 200) {
             var $ = cheerio.load(html);
@@ -36,11 +35,11 @@ router.get('/', function(req, res, next) {
 
             q.all(courseRequests).then(function(results) {
                 var courses = [].concat.apply([], results);
-                firebase.saveCourses("ubc", courses, res);
+                firebase.saveCourses("ubc", courses);
             })
         }
     });
-});
+}
 
 function subjectHandler($) {
     var courses = [];
@@ -55,4 +54,4 @@ function subjectHandler($) {
     return courses;
 }
 
-module.exports = router;
+module.exports.start = start;
