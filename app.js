@@ -64,16 +64,22 @@ app.use(function(err, req, res, next) {
 
 var args = process.argv;
 if (args.length <= 2) {
-    console.log("No arguments provided in the form: 'scrape' [university]");
+    console.log("No arguments provided in the form: 'scrape|scrapemeta' [university]");
     process.exit(0);
 } else {
-    if (args[2] === 'scrape') {
+    var action = args[2];
+    if (action === 'scrape' || action === 'scrapemeta') {
         if (args.length > 3) {
             var university = args[3];
             try {
                 var universityScraper = require('./routes/' + university);
-                universityScraper.start();
+                if (action === 'scrape') {
+                    universityScraper.start();
+                } else if (action === 'scrapemeta') {
+                    universityScraper.getCourseMetadata();
+                }
             } catch (err) {
+                console.log(err);
                 console.log("University key: "+ university + " is not recognized.");
                 process.exit(0);
             }

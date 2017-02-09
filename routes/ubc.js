@@ -40,6 +40,7 @@ function start() {
         }
     });
 }
+module.exports.start = start;
 
 function subjectHandler($) {
     var courses = [];
@@ -54,4 +55,41 @@ function subjectHandler($) {
     return courses;
 }
 
-module.exports.start = start;
+function getCourseMetadata() {
+    firebase.getUniverityCourses("ubc").then(function(courses) {
+        var deptPrefix = 'https://courses.students.ubc.ca/cs/main?pname=subjarea&tname=subjareas&req=3&dept='
+        var courseNumberPrefix = '&course=';
+
+        var courseRequests = [];
+        for (var courseKey in courses) {
+            var result = courses[courseKey].split(" ");
+            var url = deptPrefix + result[0] + courseNumberPrefix + result[1];
+            var courseRequest = request({
+                uri: deptPrefix + result[0] + courseNumberPrefix + result[1],
+                transform: function(body) {
+                    return cheerio.load(body);
+                }
+            }).then(courseHandler);
+            courseRequests.push(courseRequest);
+        }
+
+        q.map(courseRequests, function(courseRequest) {
+            return courseRequest;
+        }, {
+            concurrency: 10
+        }).then(function(results) {
+            var courseDescriptions = [].concat.apply([], results);
+            courseDescriptions.forEach(function(courseDescription) {
+                console.log(courseDescription.trim());
+            });
+        });
+    });
+}
+module.exports.getCourseMetadata = getCourseMetadata;
+
+function courseHandler($) {
+    var courseDescription = "";
+    var courseHeading = $('h4');
+    courseDescription = courseHeading.next().text();
+    return courseDescription;
+}

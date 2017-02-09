@@ -49,6 +49,24 @@ function saveCourses(universityVal, courses) {
 }
 module.exports.saveCourses = saveCourses;
 
+function getUniverityCourses(university) {
+    var courses = {};
+    var coursesRef = firebaseApp.database().ref('courses');
+    return coursesRef
+        .orderByChild('university')
+        .equalTo(university)
+        .once('value')
+        .then(function(snapshot) {
+            snapshot.forEach(function(childSnapshot) {
+                var courseKey = childSnapshot.key;
+                var courseName = childSnapshot.val().course_name;
+                courses[courseKey] = courseName;
+            });
+            return courses;
+        });
+}
+module.exports.getUniverityCourses = getUniverityCourses;
+
 function getStatistics() {
     var universityCounts = new Map();
     firebaseApp.database().ref('courses')

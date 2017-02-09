@@ -55,6 +55,7 @@ function start() {
         }
     });
 }
+module.exports.start = start;
 
 function subjectHandler($) {
     var courses = [];
@@ -69,5 +70,3 @@ function subjectHandler($) {
     });
     return courses;
 }
-
-module.exports.start = start;
